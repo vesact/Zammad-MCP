@@ -240,6 +240,7 @@ class ZammadClient:
         article_type: str = "note",
         internal: bool = False,
         sender: str = "Agent",
+        content_type: str = "text/plain",
         attachments: list[dict[str, str]] | None = None,
     ) -> dict[str, Any]:
         """Add an article (comment/note) to a ticket with optional attachments.
@@ -250,6 +251,7 @@ class ZammadClient:
             article_type: Article type (note, email, phone)
             internal: Whether the article is internal
             sender: Sender type (Agent, Customer, System)
+            content_type: Body format (text/plain or text/html)
             attachments: Optional list of attachments with keys:
                 - filename: str
                 - data: str (base64-encoded content)
@@ -264,6 +266,7 @@ class ZammadClient:
             "type": article_type,
             "internal": internal,
             "sender": sender,
+            "content_type": content_type,
         }
 
         if attachments:

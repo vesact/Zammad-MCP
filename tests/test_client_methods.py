@@ -363,7 +363,14 @@ class TestZammadClientMethods:
 
         assert result["id"] == 1
         mock_instance.ticket_article.create.assert_called_once_with(
-            {"ticket_id": 1, "body": "Response", "type": "email", "internal": True, "sender": "Customer"}
+            {
+                "ticket_id": 1,
+                "body": "Response",
+                "type": "email",
+                "internal": True,
+                "sender": "Customer",
+                "content_type": "text/plain",
+            }
         )
 
     def test_get_user(self, mock_zammad_api: Mock) -> None:

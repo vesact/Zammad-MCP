@@ -73,13 +73,24 @@ class TestTicketUpdate:
 class TestArticleCreate:
     """Test ArticleCreate model validation."""
 
-    def test_html_sanitization_in_body(self):
-        """Test that HTML is escaped in article body."""
-        article = ArticleCreate(
-            ticket_id=123,
-            body="<div onclick='alert()'>Click me</div>",
-        )
-        assert article.body == "&lt;div onclick=&#x27;alert()&#x27;&gt;Click me&lt;/div&gt;"
+    def test_plain_text_body_is_not_escaped(self):
+        """Test that a plain-text body (e.g. SQL with quotes) is kept verbatim."""
+        sql = "INSERT INTO Skills (Name) VALUES (N'Creo'); -- \"quoted\" & <tag>"
+        article = ArticleCreate(ticket_id=123, body=sql)
+        assert article.body == sql
+        assert article.content_type == "text/plain"
+
+    def test_html_body_is_sent_unmodified(self):
+        """Test that a text/html body keeps its markup; Zammad sanitizes it on save."""
+        body = "<p>SQL:</p><pre><code>SELECT 1;</code></pre>"
+        article = ArticleCreate(ticket_id=123, body=body, content_type="text/html")
+        assert article.body == body
+        assert article.content_type == "text/html"
+
+    def test_content_type_validation(self):
+        """Test that only text/plain and text/html are accepted."""
+        with pytest.raises(ValidationError):
+            ArticleCreate(ticket_id=123, body="Test", content_type="application/json")
 
     def test_ticket_id_validation(self):
         """Test that ticket_id must be positive."""

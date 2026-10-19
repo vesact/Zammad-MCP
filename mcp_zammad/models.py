@@ -5,6 +5,7 @@ import html
 import os
 from datetime import date, datetime
 from enum import Enum
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
@@ -322,15 +323,13 @@ class ArticleCreate(StrictBaseModel):
     article_type: ArticleType = Field(default=ArticleType.NOTE, alias="type", description="Article type")
     internal: bool = Field(default=False, description="Whether the article is internal")
     sender: ArticleSender = Field(default=ArticleSender.AGENT, description="Sender type")
+    content_type: Literal["text/plain", "text/html"] = Field(
+        default="text/plain",
+        description="Body format: text/plain (shown verbatim) or text/html (sanitized by Zammad on save)",
+    )
     attachments: list[AttachmentUpload] | None = Field(
         default=None, description="Optional attachments to include", max_length=10
     )
-
-    @field_validator("body")
-    @classmethod
-    def sanitize_body(cls, v: str) -> str:
-        """Escape HTML to prevent XSS attacks."""
-        return html.escape(v)
 
 
 class GetTicketParams(StrictBaseModel):
