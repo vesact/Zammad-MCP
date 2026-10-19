@@ -1173,7 +1173,8 @@ class ZammadMCPServer:
                     - article_type (ArticleType): Type enum - NOTE, EMAIL, etc. (required)
                     - internal (bool): Internal note vs customer-visible (default: False)
                     - subject (str | None): Article subject (for emails)
-                    - content_type (str | None): text/plain or text/html (default: text/plain)
+                    - content_type (str): text/plain (shown verbatim) or text/html, e.g. <pre><code> for code
+                      blocks (default: text/plain)
                     - to (str | None): Email recipient (for email type)
                     - cc (str | None): Email CC recipients
                     - attachments (list[AttachmentUpload] | None): Optional attachments (max 10)
@@ -1205,7 +1206,7 @@ class ZammadMCPServer:
                 - Returns "Error: Validation failed" if body or type missing
                 - Returns "Error: Resource not found" if ticket_id invalid
                 - Returns "Error: Permission denied" if no article create permissions
-                - Sanitizes HTML content if content_type is text/html
+                - text/html bodies are sanitized by Zammad itself on save; the body is sent unmodified
                 - Validates base64 encoding before upload
                 - Sanitizes filenames to prevent path traversal
                 - Limits to 10 attachments per article

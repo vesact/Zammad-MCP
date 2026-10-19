@@ -517,7 +517,13 @@ def test_add_article_tool(mock_zammad_client, sample_article_data, decorator_cap
 
     # Verify the client was called with correct params (including attachments=None for backward compat)
     mock_instance.add_article.assert_called_once_with(
-        ticket_id=1, article_type="note", attachments=None, body="New comment", internal=False, sender="Agent"
+        ticket_id=1,
+        article_type="note",
+        attachments=None,
+        body="New comment",
+        internal=False,
+        sender="Agent",
+        content_type="text/plain",
     )
 
 
@@ -2615,9 +2621,9 @@ async def test_all_tools_have_title_annotation():
     tools = await server.mcp.list_tools()
 
     for tool in tools:
-        assert hasattr(
-            tool.annotations, "title"
-        ), f"Tool '{tool.name}' missing 'title' annotation. Add title for better UX in MCP clients."
+        assert hasattr(tool.annotations, "title"), (
+            f"Tool '{tool.name}' missing 'title' annotation. Add title for better UX in MCP clients."
+        )
         assert tool.annotations.title, "Title must not be empty"
         # Title should be human-readable (not snake_case)
         assert " " in tool.annotations.title, f"Title '{tool.annotations.title}' should be human-readable with spaces"
